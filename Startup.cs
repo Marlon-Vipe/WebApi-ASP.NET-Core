@@ -15,6 +15,7 @@ namespace WebApi_players
 {
     public class Startup
     {
+        readonly string MiCors = "MiCors";
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -27,6 +28,14 @@ namespace WebApi_players
         {
             services.AddControllersWithViews();
             services.AddDbContext<AppDBContext>(options => options.UseSqlServer(Configuration.GetConnectionString("Connection")));
+            services.AddCors(options =>
+            {
+                options.AddPolicy(name: MiCors,
+                    builder =>
+                    {
+                        builder.WithOrigins("*");
+                    });
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -47,7 +56,9 @@ namespace WebApi_players
 
             app.UseRouting();
 
+            app.UseCors(MiCors);
             app.UseAuthorization();
+            
 
             app.UseEndpoints(endpoints =>
             {
